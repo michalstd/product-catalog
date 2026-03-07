@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProductCatalog.Api.Models;
-using ProductCatalog.Api.Repositories;
+using ProductCatalog.Api.DTO;
+using ProductCatalog.Api.Services;
 
 namespace ProductCatalog.Api.Controllers;
 
@@ -8,23 +8,23 @@ namespace ProductCatalog.Api.Controllers;
 [Route("api/[controller]")]
 public class ProductsController : ControllerBase
 {
-    private readonly IProductRepository _repository;
+    private readonly IProductService _service;
 
-    public ProductsController(IProductRepository repository)
+    public ProductsController(IProductService service)
     {
-        _repository = repository;
+        _service = service;
     }
 
     [HttpGet]
     public IActionResult GetProducts()
     {
-        return Ok(_repository.GetAll());
+        return Ok(_service.GetAll());
     }
 
     [HttpPost]
-    public IActionResult AddProduct([FromBody] Product product)
+    public IActionResult AddProduct(ProductDto product)
     {
-        _repository.Add(product);
-        return Ok(product);
+        var result = _service.Add(product);
+        return Ok(result);
     }
 }
