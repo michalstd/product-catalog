@@ -1,6 +1,6 @@
-﻿using ProductCatalog.Api.DTO;
+﻿using ProductCatalog.Api.Repositories;
+using ProductCatalog.Api.DTO;
 using ProductCatalog.Api.Models;
-using ProductCatalog.Api.Repositories;
 
 namespace ProductCatalog.Api.Services;
 
@@ -13,12 +13,18 @@ public class ProductService : IProductService
         _repository = repository;
     }
 
-    public IEnumerable<Product> GetAll()
+    public IEnumerable<ProductDto> GetAll()
     {
-        return _repository.GetAll();
+        return _repository.GetAll()
+            .Select(p => new ProductDto
+            {
+                Code = p.Code,
+                Name = p.Name,
+                Price = p.Price
+            });
     }
 
-    public Product Add(ProductDto dto)
+    public void Add(ProductDto dto)
     {
         var product = new Product
         {
@@ -28,7 +34,5 @@ public class ProductService : IProductService
         };
 
         _repository.Add(product);
-
-        return product;
     }
 }

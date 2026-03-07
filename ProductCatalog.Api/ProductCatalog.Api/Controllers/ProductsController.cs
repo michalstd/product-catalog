@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProductCatalog.Api.DTO;
 using ProductCatalog.Api.Services;
+using ProductCatalog.Api.DTO;
 
 namespace ProductCatalog.Api.Controllers;
 
@@ -24,7 +24,7 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public IActionResult AddProduct(ProductDto product)
     {
-        var result = _service.Add(product);
-        return Ok(result);
+        _service.Add(product);
+        return Ok(product);
     }
 }
