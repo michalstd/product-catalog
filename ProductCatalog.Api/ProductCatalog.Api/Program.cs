@@ -25,5 +25,6 @@ var app = builder.Build();
 app.UseCors("angular");
 
 app.MapControllers();
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.Run();
