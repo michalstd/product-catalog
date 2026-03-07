@@ -21,11 +21,17 @@ export class ProductFormComponent {
 
   constructor(private productService: ProductService) {}
 
-  addProduct() {
-    this.productService.addProduct(this.product)
-      .subscribe(() => {
-        alert("Produkt dodany")
-        this.product = { code: '', name: '', price: 0 }
-      })
-  }
+addProduct() {
+  this.productService.addProduct(this.product)
+    .subscribe(() => {
+
+      this.productService.notifyRefresh()
+
+      this.product = {
+        code: '',
+        name: '',
+        price: 0
+      }
+    })
+}
 }

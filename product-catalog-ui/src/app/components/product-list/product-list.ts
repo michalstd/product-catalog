@@ -7,8 +7,7 @@ import { Product } from '../../models/product'
   selector: 'app-product-list',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './product-list.component.html',
-  styleUrl: './product-list.css'
+  templateUrl: './product-list.component.html'
 })
 export class ProductListComponent implements OnInit {
 
@@ -17,8 +16,19 @@ export class ProductListComponent implements OnInit {
   constructor(private productService: ProductService) {}
 
   ngOnInit(): void {
-    this.productService.getProducts().subscribe(data => {
-      this.products = data
-    })
+
+    this.loadProducts()
+
+    this.productService.getRefreshListener()
+      .subscribe(() => {
+        this.loadProducts()
+      })
+  }
+
+  loadProducts() {
+    this.productService.getProducts()
+      .subscribe(data => {
+        this.products = data
+      })
   }
 }
