@@ -66,4 +66,16 @@ describe('ProductFormComponent', () => {
 
   })
 
+  it('should validate min price', () => {
+
+  component.productForm.setValue({
+    code: 'P1',
+    name: 'Laptop',
+    price: 0
+  })
+
+  expect(component.productForm.valid).toBe(false)
+
+})
+
 })
