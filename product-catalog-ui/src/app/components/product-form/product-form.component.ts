@@ -1,37 +1,55 @@
 import { Component } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { FormsModule } from '@angular/forms'
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms'
 import { ProductService } from '../../services/product.service'
-import { Product } from '../../models/product'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { MatButtonModule } from '@angular/material/button'
 
 @Component({
   selector: 'app-product-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
+  ],
   templateUrl: './product-form.component.html',
   styleUrl: './product-form.css'
 })
 export class ProductFormComponent {
 
-  product: Product = {
-    code: '',
-    name: '',
-    price: 0
+  productForm: FormGroup
+
+  constructor(
+    private fb: FormBuilder,
+    private productService: ProductService
+  ) {
+
+    this.productForm = this.fb.group({
+      code: ['', Validators.required],
+      name: ['', Validators.required],
+      price: [0, [Validators.required, Validators.min(1)]]
+    })
   }
 
-  constructor(private productService: ProductService) {}
+ submit() {
 
-addProduct() {
-  this.productService.addProduct(this.product)
+  if(this.productForm.invalid)
+    return
+
+  this.productService.addProduct(this.productForm.value)
     .subscribe(() => {
 
-      this.productService.notifyRefresh()
-
-      this.product = {
+      this.productForm.reset({
         code: '',
         name: '',
         price: 0
-      }
+      })
+
+      this.productService.notifyRefresh()
     })
 }
 }

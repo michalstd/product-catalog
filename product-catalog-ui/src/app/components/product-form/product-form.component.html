@@ -1,16 +1,22 @@
-<h2>Dodaj produkt</h2>
+<form [formGroup]="productForm" (ngSubmit)="submit()">
 
-<form (ngSubmit)="addProduct()">
+<mat-form-field appearance="outline">
+  <mat-label>Kod</mat-label>
+  <input matInput formControlName="code">
+</mat-form-field>
 
-  <label>Kod</label>
-  <input [(ngModel)]="product.code" name="code">
+<mat-form-field appearance="outline">
+  <mat-label>Nazwa</mat-label>
+  <input matInput formControlName="name">
+</mat-form-field>
 
-  <label>Nazwa</label>
-  <input [(ngModel)]="product.name" name="name">
+<mat-form-field appearance="outline">
+  <mat-label>Cena</mat-label>
+  <input matInput type="number" formControlName="price">
+</mat-form-field>
 
-  <label>Cena</label>
-  <input type="number" [(ngModel)]="product.price" name="price">
-
-  <button type="submit">Dodaj</button>
+<button mat-raised-button color="primary" type="submit">
+Dodaj produkt
+</button>
 
 </form>
