@@ -1,22 +1,69 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ReactiveFormsModule } from '@angular/forms'
+import { ProductFormComponent } from './product-form.component'
+import { ProductService } from '../../services/product.service'
+import { of } from 'rxjs'
+import { vi } from 'vitest'
 
-import { ProductForm } from './product-form';
+describe('ProductFormComponent', () => {
 
-describe('ProductForm', () => {
-  let component: ProductForm;
-  let fixture: ComponentFixture<ProductForm>;
+  let component: ProductFormComponent
+  let fixture: ComponentFixture<ProductFormComponent>
+
+  const mockService = {
+    addProduct: vi.fn().mockReturnValue(of({}))
+  }
 
   beforeEach(async () => {
+
     await TestBed.configureTestingModule({
-      imports: [ProductForm],
-    }).compileComponents();
+      imports: [
+        ReactiveFormsModule,
+        ProductFormComponent
+      ],
+      providers: [
+        { provide: ProductService, useValue: mockService }
+      ]
+    }).compileComponents()
 
-    fixture = TestBed.createComponent(ProductForm);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-  });
+    fixture = TestBed.createComponent(ProductFormComponent)
+    component = fixture.componentInstance
+    fixture.detectChanges()
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+  })
+
+  it('should create form', () => {
+    expect(component).toBeTruthy()
+  })
+
+  it('form should be invalid when empty', () => {
+    expect(component.productForm.valid).toBe(false)
+  })
+
+  it('should validate required fields', () => {
+
+    component.productForm.setValue({
+      code: '',
+      name: '',
+      price: null
+    })
+
+    expect(component.productForm.valid).toBe(false)
+
+  })
+
+  it('should submit when form valid', () => {
+
+    component.productForm.setValue({
+      code: 'P1',
+      name: 'Laptop',
+      price: 2000
+    })
+
+    component.submit()
+
+    expect(mockService.addProduct).toHaveBeenCalled()
+
+  })
+
+})

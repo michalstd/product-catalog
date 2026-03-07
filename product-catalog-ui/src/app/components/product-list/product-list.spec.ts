@@ -1,22 +1,51 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing'
+import { ProductListComponent } from './product-list'
+import { ProductService } from '../../services/product.service'
+import { of } from 'rxjs'
+import { vi } from 'vitest'
 
-import { ProductList } from './product-list';
+describe('ProductListComponent', () => {
 
-describe('ProductList', () => {
-  let component: ProductList;
-  let fixture: ComponentFixture<ProductList>;
+  let component: ProductListComponent
+  let fixture: ComponentFixture<ProductListComponent>
+
+  const mockProducts = [
+    { code: 'P1', name: 'Laptop', price: 2000 },
+    { code: 'P2', name: 'Mouse', price: 100 }
+  ]
+
+  const mockService = {
+    getProducts: vi.fn().mockReturnValue(of(mockProducts)),
+    getRefreshListener: vi.fn().mockReturnValue(of())
+  }
 
   beforeEach(async () => {
+
     await TestBed.configureTestingModule({
-      imports: [ProductList],
-    }).compileComponents();
+      imports: [ProductListComponent],
+      providers: [
+        { provide: ProductService, useValue: mockService }
+      ]
+    }).compileComponents()
 
-    fixture = TestBed.createComponent(ProductList);
-    component = fixture.componentInstance;
-    await fixture.whenStable();
-  });
+    fixture = TestBed.createComponent(ProductListComponent)
+    component = fixture.componentInstance
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
-  });
-});
+    fixture.detectChanges()
+
+  })
+
+  it('should load products', () => {
+    expect(component.products.length).toBe(2)
+  })
+
+  it('should render table rows', () => {
+
+    const compiled = fixture.nativeElement as HTMLElement
+    const rows = compiled.querySelectorAll('table tr')
+
+    expect(rows.length).toBeGreaterThan(1)
+
+  })
+
+})
