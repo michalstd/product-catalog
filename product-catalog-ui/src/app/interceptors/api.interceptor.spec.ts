@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing'
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'
-import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http'
+import { HttpClient } from '@angular/common/http'
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing'
+import { provideHttpClient, withInterceptors } from '@angular/common/http'
 import { apiInterceptor } from './api.interceptor'
 
-describe('ApiInterceptor', () => {
+describe('apiInterceptor', () => {
 
   let http: HttpClient
   let httpMock: HttpTestingController
@@ -11,13 +12,11 @@ describe('ApiInterceptor', () => {
   beforeEach(() => {
 
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
       providers: [
-        {
-          provide: HTTP_INTERCEPTORS,
-          useClass: apiInterceptor,
-          multi: true
-        }
+        provideHttpClient(
+          withInterceptors([apiInterceptor])
+        ),
+        provideHttpClientTesting()
       ]
     })
 
@@ -26,13 +25,17 @@ describe('ApiInterceptor', () => {
 
   })
 
-  it('should add content-type header', () => {
+  afterEach(() => {
+    httpMock.verify()
+  })
+
+  it('should add Content-Type header', () => {
 
     http.get('/products').subscribe()
 
     const req = httpMock.expectOne('/products')
 
-    expect(req.request.headers.has('Content-Type')).toBe(true)
+    expect(req.request.headers.get('Content-Type')).toBe('application/json')
 
     req.flush({})
 
