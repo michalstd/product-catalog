@@ -1,7 +1,6 @@
 import { TestBed } from '@angular/core/testing'
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'
-import { HttpClient } from '@angular/common/http'
-import { provideHttpClient, withInterceptors } from '@angular/common/http'
+import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http'
 import { apiInterceptor } from './api.interceptor'
 
 describe('ApiInterceptor', () => {
@@ -14,7 +13,11 @@ describe('ApiInterceptor', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
-        provideHttpClient(withInterceptors([apiInterceptor]))
+        {
+          provide: HTTP_INTERCEPTORS,
+          useClass: apiInterceptor,
+          multi: true
+        }
       ]
     })
 
@@ -30,6 +33,8 @@ describe('ApiInterceptor', () => {
     const req = httpMock.expectOne('/products')
 
     expect(req.request.headers.has('Content-Type')).toBe(true)
+
+    req.flush({})
 
   })
 

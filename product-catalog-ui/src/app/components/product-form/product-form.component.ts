@@ -1,6 +1,7 @@
 import { Component } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms'
+import { Router } from '@angular/router'
 import { ProductService } from '../../services/product.service'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatInputModule } from '@angular/material/input'
@@ -24,9 +25,10 @@ export class ProductFormComponent {
   productForm: FormGroup
 
   constructor(
-    private fb: FormBuilder,
-    private productService: ProductService
-  ) {
+  private fb: FormBuilder,
+  private productService: ProductService,
+  private router: Router
+) {
 
     this.productForm = this.fb.group({
       code: ['', Validators.required],
@@ -50,6 +52,9 @@ export class ProductFormComponent {
       })
 
       this.productService.notifyRefresh()
+
+      this.router.navigate(['/products'])
+
     })
-}
+  }
 }

@@ -48,4 +48,22 @@ describe('ProductListComponent', () => {
 
   })
 
+  it('should render 3 rows in Material table', () => {
+
+  const mockProducts = [
+    { id: '1', code: 'P1', name: 'Laptop', price: 3000 },
+    { id: '2', code: 'P2', name: 'Mouse', price: 100 },
+    { id: '3', code: 'P3', name: 'Keyboard', price: 200 }
+  ]
+
+  component.products = mockProducts
+
+  fixture.detectChanges()
+
+  const rows = fixture.nativeElement.querySelectorAll('tr.mat-row')
+
+  expect(rows.length).toBe(3)
+
+})
+
 })

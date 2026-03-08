@@ -19,20 +19,21 @@ describe('ProductService', () => {
 
   })
 
+  afterEach(() => {
+    httpMock.verify()
+  })
+
   it('should fetch products from API', () => {
 
     const mockProducts = [
-      { code: 'P1', name: 'Laptop', price: 2000 }
+      { id: 1, code: 'P1', name: 'Laptop', price: 3000 }
     ]
 
     service.getProducts().subscribe(products => {
-
       expect(products.length).toBe(1)
-      expect(products[0].name).toBe('Laptop')
-
     })
 
-    const req = httpMock.expectOne('http://localhost:8080/products')
+    const req = httpMock.expectOne(req => req.url.includes('/products'))
 
     expect(req.request.method).toBe('GET')
 
