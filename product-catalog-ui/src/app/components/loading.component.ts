@@ -1,11 +1,11 @@
-import { Component } from '@angular/core'
+import { Component, inject } from '@angular/core'
+import { AsyncPipe, NgIf } from '@angular/common'
 import { LoadingService } from '../services/loading.service'
-import { AsyncPipe } from '@angular/common'
 
 @Component({
   selector: 'app-loading',
   standalone: true,
-  imports: [AsyncPipe],
+  imports: [NgIf, AsyncPipe],
   template: `
     <div class="spinner" *ngIf="loading$ | async">
       Loading...
@@ -14,8 +14,8 @@ import { AsyncPipe } from '@angular/common'
 })
 export class LoadingComponent {
 
-  loading$ = this.loadingService.loading$
+  private loadingService = inject(LoadingService)
 
-  constructor(private loadingService: LoadingService) {}
+  loading$ = this.loadingService.loading$
 
 }
