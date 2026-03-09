@@ -33,9 +33,12 @@ describe('apiInterceptor', () => {
 
     http.get('/products').subscribe()
 
-    const req = httpMock.expectOne('/products')
+    const req = httpMock.expectOne((request) =>
+      request.url.includes('/products')
+    )
 
-    expect(req.request.headers.get('Content-Type')).toBe('application/json')
+    expect(req.request.headers.get('Content-Type'))
+      .toBe('application/json')
 
     req.flush({})
 

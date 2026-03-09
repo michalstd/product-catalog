@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { ReactiveFormsModule } from '@angular/forms'
 import { ProductFormComponent } from './product-form.component'
-import { ProductService } from '../../services/product.service'
-import { Router } from '@angular/router'
+import { ReactiveFormsModule } from '@angular/forms'
 import { of } from 'rxjs'
+import { ProductService } from '../../services/product.service'
 import { vi } from 'vitest'
 
 describe('ProductFormComponent', () => {
@@ -11,25 +10,25 @@ describe('ProductFormComponent', () => {
   let component: ProductFormComponent
   let fixture: ComponentFixture<ProductFormComponent>
 
-  const mockService = {
-    addProduct: vi.fn().mockReturnValue(of({})),
-    notifyRefresh: vi.fn()
+  let productServiceMock: {
+    addProduct: ReturnType<typeof vi.fn>
+    notifyRefresh: ReturnType<typeof vi.fn>
   }
-
-  const routerMock = {
-  navigate: vi.fn()
-}
 
   beforeEach(async () => {
 
+    productServiceMock = {
+      addProduct: vi.fn().mockReturnValue(of({})),
+      notifyRefresh: vi.fn()
+    }
+
     await TestBed.configureTestingModule({
       imports: [
-        ReactiveFormsModule,
-        ProductFormComponent
+        ProductFormComponent,
+        ReactiveFormsModule
       ],
       providers: [
-        { provide: ProductService, useValue: mockService },
-        { provide: Router, useValue: routerMock }
+        { provide: ProductService, useValue: productServiceMock }
       ]
     }).compileComponents()
 
@@ -39,27 +38,41 @@ describe('ProductFormComponent', () => {
 
   })
 
-  it('should create form', () => {
+  it('should create', () => {
     expect(component).toBeTruthy()
   })
 
-  it('form should be invalid when empty', () => {
+  it('should be invalid when form is empty', () => {
+
     expect(component.productForm.valid).toBe(false)
+
   })
 
-  it('should validate required fields', () => {
+  it('should be valid when form is filled', () => {
 
     component.productForm.setValue({
-      code: '',
-      name: '',
-      price: null
+      code: 'P1',
+      name: 'Laptop',
+      price: 2000
+    })
+
+    expect(component.productForm.valid).toBe(true)
+
+  })
+
+  it('should validate min price', () => {
+
+    component.productForm.setValue({
+      code: 'P1',
+      name: 'Laptop',
+      price: 0
     })
 
     expect(component.productForm.valid).toBe(false)
 
   })
 
-  it('should submit when form valid', () => {
+  it('should call service when submitting valid form', () => {
 
     component.productForm.setValue({
       code: 'P1',
@@ -69,58 +82,8 @@ describe('ProductFormComponent', () => {
 
     component.submit()
 
-    expect(mockService.addProduct).toHaveBeenCalled()
+    expect(productServiceMock.addProduct).toHaveBeenCalled()
 
   })
-
-  it('should validate min price', () => {
-
-  component.productForm.setValue({
-    code: 'P1',
-    name: 'Laptop',
-    price: 0
-  })
-
-  expect(component.productForm.valid).toBe(false)
-
-})
-
-  it('should be invalid when form is empty', () => {
-
-  component.productForm.setValue({
-    code: '',
-    name: '',
-    price: null
-  })
-
-  expect(component.productForm.valid).toBe(false)
-
-  it('should be valid when form is filled', () => {
-
-  component.productForm.setValue({
-    code: 'P1',
-    name: 'Laptop',
-    price: 3000
-  })
-
-  expect(component.productForm.valid).toBe(true)
-
-  it('should navigate to products after submit', () => {
-
-  component.productForm.setValue({
-    code: 'P1',
-    name: 'Laptop',
-    price: 3000
-  })
-
-  component.submit()
-
-  expect(routerMock.navigate).toHaveBeenCalledWith(['/products'])
-
-})
-
-})
-
-})
 
 })

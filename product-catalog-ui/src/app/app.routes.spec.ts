@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing'
-import { Router } from '@angular/router'
-import { provideRouter } from '@angular/router'
+import { provideRouter, Router } from '@angular/router'
 import { routes } from './app.routes'
 
 describe('Routing', () => {
 
   let router: Router
 
-  beforeEach(async () => {
+  beforeEach(() => {
+
+    TestBed.resetTestingModule()
 
     TestBed.configureTestingModule({
       providers: [
@@ -21,9 +22,9 @@ describe('Routing', () => {
 
   it('should navigate to root', async () => {
 
-    const result = await router.navigate([''])
+    await router.navigate(['/'])
 
-    expect(result).toBe(true)
+    expect(router.url).toBe('/')
 
   })
 

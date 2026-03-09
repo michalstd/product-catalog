@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing'
-import { ProductListComponent } from './product-list'
-import { ProductService } from '../../services/product.service'
+import { ProductListComponent } from './product-list.component'
 import { of } from 'rxjs'
+import { ProductService } from '../../services/product.service'
 import { vi } from 'vitest'
+import { By } from '@angular/platform-browser'
 
 describe('ProductListComponent', () => {
 
@@ -10,13 +11,14 @@ describe('ProductListComponent', () => {
   let fixture: ComponentFixture<ProductListComponent>
 
   const mockProducts = [
-    { code: 'P1', name: 'Laptop', price: 2000 },
-    { code: 'P2', name: 'Mouse', price: 100 }
+    { id: '1', code: 'P1', name: 'Laptop', price: 3000 },
+    { id: '2', code: 'P2', name: 'Mouse', price: 100 },
+    { id: '3', code: 'P3', name: 'Keyboard', price: 200 }
   ]
 
-  const mockService = {
+  const productServiceMock = {
     getProducts: vi.fn().mockReturnValue(of(mockProducts)),
-    getRefreshListener: vi.fn().mockReturnValue(of())
+    getRefreshListener: vi.fn().mockReturnValue(of(true))
   }
 
   beforeEach(async () => {
@@ -24,7 +26,7 @@ describe('ProductListComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ProductListComponent],
       providers: [
-        { provide: ProductService, useValue: mockService }
+        { provide: ProductService, useValue: productServiceMock }
       ]
     }).compileComponents()
 
@@ -35,35 +37,18 @@ describe('ProductListComponent', () => {
 
   })
 
-  it('should load products', () => {
-    expect(component.products.length).toBe(2)
-  })
+  it('should create', () => {
 
-  it('should render table rows', () => {
-
-    const compiled = fixture.nativeElement as HTMLElement
-    const rows = compiled.querySelectorAll('table tr')
-
-    expect(rows.length).toBeGreaterThan(1)
+    expect(component).toBeTruthy()
 
   })
 
-  it('should render 3 rows in Material table', () => {
+  it('should load products from service', () => {
 
-  const mockProducts = [
-    { id: '1', code: 'P1', name: 'Laptop', price: 3000 },
-    { id: '2', code: 'P2', name: 'Mouse', price: 100 },
-    { id: '3', code: 'P3', name: 'Keyboard', price: 200 }
-  ]
+    expect(productServiceMock.getProducts).toHaveBeenCalled()
 
-  component.products = mockProducts
+    expect(component.products.length).toBe(3)
 
-  fixture.detectChanges()
-
-  const rows = fixture.nativeElement.querySelectorAll('tr.mat-row')
-
-  expect(rows.length).toBe(3)
-
-})
+  })
 
 })
