@@ -1,8 +1,6 @@
 ﻿using ProductCatalog.Api.Repositories;
 using ProductCatalog.Api.DTO;
-using ProductCatalog.Api.Models;
-
-namespace ProductCatalog.Api.Services;
+using ProductCatalog.Api.Mapping;
 
 public class ProductService : IProductService
 {
@@ -15,24 +13,17 @@ public class ProductService : IProductService
 
     public IEnumerable<ProductDto> GetAll()
     {
-        return _repository.GetAll()
-            .Select(p => new ProductDto
-            {
-                Code = p.Code,
-                Name = p.Name,
-                Price = p.Price
-            });
+        return _repository
+            .GetAll()
+            .Select(ProductMapper.ToDto);
     }
 
-    public void Add(ProductDto dto)
+    public ProductDto Add(ProductDto dto)
     {
-        var product = new Product
-        {
-            Code = dto.Code,
-            Name = dto.Name,
-            Price = dto.Price
-        };
+        var model = ProductMapper.ToModel(dto);
 
-        _repository.Add(product);
+        _repository.Add(model);
+
+        return ProductMapper.ToDto(model);
     }
 }

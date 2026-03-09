@@ -1,5 +1,4 @@
 using ProductCatalog.Api.Repositories;
-using ProductCatalog.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

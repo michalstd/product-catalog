@@ -1,10 +1,7 @@
-using Xunit;
 using Moq;
-using ProductCatalog.Api.Services;
 using ProductCatalog.Api.Repositories;
 using ProductCatalog.Api.Models;
 using ProductCatalog.Api.DTO;
-using System.Collections.Generic;
 
 public class ProductServiceTests
 {
@@ -56,5 +53,25 @@ public class ProductServiceTests
         Assert.Single(result);
         Assert.Equal("Laptop", result.First().Name);
     }
+
+    [Fact]
+    public void Add_Should_Call_Repository()
+    {
+        var repo = new Mock<IProductRepository>();
+
+        var service = new ProductService(repo.Object);
+
+        var dto = new ProductDto
+        {
+            Code = "P1",
+            Name = "Laptop",
+            Price = 2000
+        };
+
+        service.Add(dto);
+
+        repo.Verify(r => r.Add(It.IsAny<Product>()), Times.Once);
+    }
+
 
 }

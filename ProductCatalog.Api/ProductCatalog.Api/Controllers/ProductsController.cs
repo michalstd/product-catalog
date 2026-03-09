@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProductCatalog.Api.Services;
 using ProductCatalog.Api.DTO;
 
-namespace ProductCatalog.Api.Controllers;
-
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/products")]
 public class ProductsController : ControllerBase
 {
     private readonly IProductService _service;
@@ -16,15 +13,20 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetProducts()
+    public ActionResult<IEnumerable<ProductDto>> GetProducts()
     {
         return Ok(_service.GetAll());
     }
 
     [HttpPost]
-    public IActionResult AddProduct(ProductDto product)
+    public ActionResult<ProductDto> AddProduct(ProductDto dto)
     {
-        _service.Add(product);
-        return Ok(product);
+        var created = _service.Add(dto);
+
+        return CreatedAtAction(
+            nameof(GetProducts),
+            new { code = created.Code },
+            created
+        );
     }
 }

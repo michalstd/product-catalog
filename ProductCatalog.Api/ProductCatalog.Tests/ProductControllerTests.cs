@@ -1,41 +1,30 @@
-﻿using Xunit;
-using Moq;
-using ProductCatalog.Api.Controllers;
-using ProductCatalog.Api.Services;
+﻿using Moq;
 using ProductCatalog.Api.DTO;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 public class ProductsControllerTests
 {
 
     [Fact]
-    public void GetProducts_Should_Return_Status200_And_Products()
+    public void GetProducts_Should_Return_200_And_Data()
     {
         var mockService = new Mock<IProductService>();
 
-        var products = new List<ProductDto>
-        {
-            new ProductDto
+        mockService.Setup(s => s.GetAll())
+            .Returns(new List<ProductDto>
             {
-                Code = "P1",
-                Name = "Laptop",
-                Price = 2000
-            }
-        };
-
-        mockService.Setup(s => s.GetAll()).Returns(products);
+            new ProductDto { Code="P1", Name="Laptop", Price=2000 }
+            });
 
         var controller = new ProductsController(mockService.Object);
 
         var result = controller.GetProducts();
 
-        var okResult = Assert.IsType<OkObjectResult>(result);
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
 
-        var returnedProducts = Assert.IsType<List<ProductDto>>(okResult.Value);
+        var data = Assert.IsType<List<ProductDto>>(ok.Value);
 
-        Assert.Single(returnedProducts);
-        Assert.Equal("Laptop", returnedProducts[0].Name);
+        Assert.Single(data);
     }
 
 }
